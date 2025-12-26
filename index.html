@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>1132929-FinalTerm</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="comic-bg-sunburst"></div>
+    <div class="comic-bg-halftone"></div>
+
+    <div class="main-layout">
+        <div class="bowl-section left-section">
+            <div class="player-label white-player">白方玩家</div>
+            <div class="bowl-container" id="bowl-white">
+                <div class="bowl-rim"></div>
+                <div class="bowl-body">
+                    <span class="bowl-count" id="score-white-display">0</span>
+                    <div class="captured-pile" id="pile-white"></div>
+                </div>
+                <div class="bowl-label">俘虜區</div>
+            </div>
+        </div>
+
+        <div class="game-container">
+            <div class="header">
+                <h1>圍棋大亂鬥!</h1>
+            </div>
+
+            <div class="status-bar">
+                <span id="turn-indicator">黑棋回合</span>
+            </div>
+
+            <div class="board-frame">
+                <div id="board" class="board">
+                </div>
+            </div>
+
+            <div class="controls">
+                <button type="button" onclick="if(typeof game !== 'undefined') game.undo()" class="btn btn-yellow">悔棋</button>
+                <button type="button" onclick="if(typeof game !== 'undefined') game.reset()" class="btn btn-red">重置</button>
+                <button type="button" onclick="if(typeof game !== 'undefined') game.pass()" class="btn btn-blue">虛手(Pass)</button>
+                <button type="button" onclick="toggleAI()" id="btn-ai" class="btn btn-green">AI: 開啟</button>
+            </div>
+
+            <div id="handicap-info" class="info-text">步數: 0</div>
+        </div>
+
+        <div class="bowl-section right-section">
+            <div class="player-label black-player">黑方玩家</div>
+            <div class="bowl-container" id="bowl-black">
+                <div class="bowl-rim"></div>
+                <div class="bowl-body">
+                    <span class="bowl-count" id="score-black-display">0</span>
+                    <div class="captured-pile" id="pile-black"></div>
+                </div>
+                <div class="bowl-label">俘虜區</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="endGameModal" class="modal-overlay">
+        <div class="modal-content comic-modal">
+            <h2 class="modal-title">遊戲結束!</h2>
+            <div class="comic-burst">
+                <div id="final-winner" class="winner-text">黑棋獲勝!</div>
+            </div>
+            <div class="score-details">
+                <div id="final-score-black" class="score-line">黑方盤面: 0</div>
+                <div id="final-score-white" class="score-line">白方盤面: 0</div>
+            </div>
+            <button type="button" onclick="if(typeof game !== 'undefined') game.closeModal()" class="btn btn-yellow btn-large">好的!</button>
+        </div>
+    </div>
+
+    <div id="animation-layer"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>

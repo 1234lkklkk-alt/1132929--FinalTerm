@@ -1,0 +1,452 @@
+﻿/* --- 漫畫字體與變數 --- */
+:root {
+    --border-black: 3px solid #000;
+    --comic-yellow: #f1c40f;
+    --comic-red: #e74c3c;
+    --comic-blue: #3498db;
+    --comic-green: #2ecc71;
+    --board-color: #f39c12;
+}
+
+body {
+    background-color: #fff;
+    /* 中文字體優先，Bangers 用於數字和標點 */
+    font-family: "Microsoft JhengHei", "微軟正黑體", 'Bangers', cursive, sans-serif;
+    margin: 0;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+/* --- 新增：漫畫放射線背景 --- */
+.comic-bg-sunburst {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-conic-gradient( from 0deg, #fff 0deg 15deg, #f0f0f0 15deg 30deg );
+    opacity: 0.6;
+    z-index: -2;
+}
+
+/* --- 修改：更粗曠的漫畫網點背景 --- */
+.comic-bg-halftone {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(#000 20%, transparent 20%);
+    background-size: 25px 25px; /* 網點變大 */
+    opacity: 0.1;
+    z-index: -1;
+}
+
+/* --- 主佈局 --- */
+.main-layout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    width: 100%;
+    max-width: 1200px;
+    /* 增加一點整體背景的漫畫框線感 */
+    padding: 20px;
+    border: 5px solid #000;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 15px 15px 0 rgba(0,0,0,0.2);
+}
+
+/* --- 棋盤與中間區域 --- */
+.game-container {
+    background: #fff;
+    border: var(--border-black);
+    box-shadow: 10px 10px 0px rgba(0,0,0,1);
+    padding: 20px;
+    width: 450px;
+    text-align: center;
+    position: relative;
+}
+
+.header h1 {
+    font-size: 3rem;
+    margin: 0 0 10px 0;
+    color: var(--comic-red);
+    text-shadow: 2px 2px 0 #000;
+    letter-spacing: 2px;
+    font-weight: 900; /* 加粗中文 */
+}
+
+.status-bar {
+    background: #000;
+    color: #fff;
+    padding: 8px;
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    font-weight: bold;
+    border: 2px solid #000;
+    transform: rotate(-1deg);
+}
+
+/* 棋盤外框 */
+.board-frame {
+    background: var(--board-color);
+    border: var(--border-black);
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    grid-template-rows: repeat(9, 1fr);
+    width: 100%;
+    aspect-ratio: 1/1;
+    position: relative;
+}
+
+/* --- 連續棋盤線 --- */
+.cell {
+    position: relative;
+    cursor: pointer;
+}
+
+    .cell::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: #000;
+        z-index: 0;
+    }
+
+    .cell::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 0;
+        height: 100%;
+        width: 2px;
+        background-color: #000;
+        z-index: 0;
+    }
+
+.star-point::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #000;
+    border-radius: 50%;
+    z-index: 1;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* --- 棋子樣式 --- */
+.stone {
+    width: 90%;
+    height: 90%;
+    border-radius: 50%;
+    position: absolute;
+    top: 5%;
+    left: 5%;
+    z-index: 2;
+    border: 2px solid #000;
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.stone.black {
+    background: #2d3436;
+    box-shadow: inset 5px 5px 0px rgba(255,255,255,0.2);
+}
+
+.stone.white {
+    background: #fff;
+    box-shadow: inset -3px -3px 0px rgba(0,0,0,0.2);
+}
+
+.last-move-marker {
+    position: absolute;
+    width: 40%;
+    height: 40%;
+    background: var(--comic-red);
+    border: 2px solid #000;
+    border-radius: 50%;
+    z-index: 10;
+    top: 30%;
+    left: 30%;
+    pointer-events: none;
+}
+
+/* --- 兩側的大碗 --- */
+.bowl-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 160px; /* 稍微加寬 */
+}
+
+.player-label {
+    font-size: 1.8rem;
+    font-weight: 900;
+    margin-bottom: 25px; /* 修改：增加下方間距，解決重疊 */
+    text-shadow: 2px 2px 0 #000;
+}
+
+.white-player {
+    color: #fff;
+    -webkit-text-stroke: 1px black;
+}
+
+.black-player {
+    color: #000;
+}
+
+.bowl-container {
+    width: 150px;
+    height: 150px;
+    position: relative;
+}
+
+/* 碗口 */
+.bowl-rim {
+    width: 100%;
+    height: 45px;
+    border: var(--border-black);
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    z-index: 3; /* 提高層級，蓋住裡面的棋子 */
+    background: radial-gradient(circle at 50% 50%, #eee 0%, #999 100%);
+}
+
+/* 碗身 */
+.bowl-body {
+    width: 100%;
+    height: 110px;
+    border: var(--border-black);
+    border-top: none;
+    border-radius: 0 0 75px 75px;
+    position: absolute;
+    top: 22px;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(to right, #7f8c8d, #fff, #7f8c8d);
+    overflow: hidden; /* 重要：防止堆疊的棋子跑出碗外 */
+}
+
+.bowl-count {
+    font-size: 4rem;
+    color: var(--comic-yellow);
+    z-index: 5; /* 數字最上層 */
+    text-shadow: 3px 3px 0 #000;
+    font-family: 'Bangers', cursive;
+    position: absolute; /* 確保數字在正中間 */
+}
+
+.bowl-label {
+    text-align: center;
+    margin-top: 145px;
+    background: #000;
+    color: #fff;
+    padding: 4px 12px;
+    font-size: 1.3rem;
+    transform: rotate(-2deg);
+    font-weight: bold;
+}
+
+/* --- 新增：碗裡的棋子堆疊層 --- */
+.captured-pile {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2; /* 在碗身之上，數字之下 */
+    display: flex;
+    flex-wrap: wrap-reverse; /* 從底部開始往上堆 */
+    align-content: flex-start;
+    justify-content: center;
+    padding-bottom: 10px; /* 底部留點空間 */
+    opacity: 0.8;
+}
+
+/* 堆疊在碗裡的小棋子 */
+.captured-stone-in-bowl {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #000;
+    margin: -2px; /* 讓它們稍微重疊堆在一起 */
+    /* 隨機旋轉一點，看起來更自然堆疊 */
+    transform: rotate(var(--random-rotate, 0deg));
+}
+
+    .captured-stone-in-bowl.black {
+        background: #2d3436;
+    }
+
+    .captured-stone-in-bowl.white {
+        background: #fff;
+    }
+
+
+/* --- 控制按鈕 --- */
+.controls {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    flex: 1;
+    border: var(--border-black);
+    color: #000;
+    font-weight: 900;
+    font-size: 1.3rem;
+    padding: 10px;
+    cursor: pointer;
+    box-shadow: 4px 4px 0 #000;
+    transition: transform 0.1s, box-shadow 0.1s;
+}
+
+    .btn:active {
+        transform: translate(4px, 4px);
+        box-shadow: none;
+    }
+
+.btn-yellow {
+    background: var(--comic-yellow);
+}
+
+.btn-red {
+    background: var(--comic-red);
+    color: #fff;
+}
+
+.btn-blue {
+    background: var(--comic-blue);
+    color: #fff;
+}
+
+.btn-green {
+    background: var(--comic-green);
+}
+
+/* --- 預覽點與飛行棋子 --- */
+.preview-dot {
+    position: absolute;
+    width: 40%;
+    height: 40%;
+    border-radius: 50%;
+    z-index: 5;
+    top: 30%;
+    left: 30%;
+    pointer-events: none;
+}
+
+.preview-valid {
+    background: rgba(46, 204, 113, 0.6);
+    border: 2px solid #000;
+}
+
+.preview-invalid {
+    background: rgba(231, 76, 60, 0.6);
+    border: 2px solid #000;
+}
+
+#animation-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+.flying-stone {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid #000;
+    transition: top 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.6s ease-in;
+}
+
+/* --- Modal --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+    .modal-overlay.show {
+        display: flex;
+    }
+
+.comic-modal {
+    background: #fff;
+    border: 4px solid #000;
+    padding: 30px;
+    text-align: center;
+    max-width: 400px;
+    box-shadow: 15px 15px 0 var(--comic-yellow);
+}
+
+.comic-burst {
+    background: var(--comic-red);
+    padding: 10px;
+    transform: rotate(-2deg);
+    margin: 20px 0;
+    border: 2px solid #000;
+}
+
+.winner-text {
+    color: #fff;
+    font-size: 2.5rem;
+    text-shadow: 3px 3px 0 #000;
+    font-weight: 900;
+}
+
+.score-line {
+    font-size: 1.5rem;
+    margin: 5px 0;
+    font-weight: bold;
+}
+
+.btn-large {
+    font-size: 1.5rem;
+    padding: 10px 40px;
+    margin-top: 20px;
+}
